@@ -18,9 +18,11 @@ class NotFoundError(DomainError):
 
 
 class ConflictError(DomainError):
+    code = "CONFLICT"
+
+class BookingConflictError(ConflictError):
     code = "BOOKING_CONFLICT"
-
-
+    
 class RoomNotFoundError(NotFoundError):
     pass
 

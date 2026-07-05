@@ -19,11 +19,18 @@ class Settings:
     timezone_default: str
 
 
-def _require_env(name: str) -> str:
+def _require_env(name: str, *, allow_empty: bool = False) -> str:
     value = os.getenv(name)
-    if value is None or value.strip() == "":
+
+    if value is None:
         raise RuntimeError(f"Missing required environment variable: {name}")
-    return value.strip()
+
+    value = value.strip()
+
+    if not allow_empty and value == "":
+        raise RuntimeError(f"Missing required environment variable: {name}")
+
+    return value
 
 
 def _require_int_env(name: str) -> int:
@@ -45,6 +52,9 @@ def get_settings() -> Settings:
         database_port=_require_int_env("DATABASE_PORT"),
         database_name=_require_env("DATABASE_NAME"),
         database_user=_require_env("DATABASE_USER"),
-        database_password=_require_env("DATABASE_PASSWORD"),
+        database_password=_require_env(
+                "DATABASE_PASSWORD",
+                allow_empty=True,
+            ),
         timezone_default=_require_env("TIMEZONE_DEFAULT"),
     )
